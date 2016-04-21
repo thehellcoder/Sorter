@@ -10,6 +10,8 @@ namespace SorterTests
         [TestMethod]
         public void TestGetRowsCount()
         {
+            Film f0 = new Film("Экипаж", "trailer.mp4", "3:00", "6+");
+
             Film f1 = new Film("Экипаж", "trailer.mp4", "3:00", "6+");
             f1.AddSession("10:00", "100500", "IMAX");
 
@@ -31,10 +33,11 @@ namespace SorterTests
                 f4.AddSession("10:00", "100500", "IMAX");
             }
 
-            Assert.AreEqual(1, f1.getRowsCount());
-            Assert.AreEqual(1, f2.getRowsCount());
-            Assert.AreEqual(2, f3.getRowsCount());
-            Assert.AreEqual(2, f4.getRowsCount());
+            Assert.AreEqual(0, f0.GetRowsCount());
+            Assert.AreEqual(1, f1.GetRowsCount());
+            Assert.AreEqual(1, f2.GetRowsCount());
+            Assert.AreEqual(2, f3.GetRowsCount());
+            Assert.AreEqual(2, f4.GetRowsCount());
         }
     }
 }

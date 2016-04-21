@@ -5,7 +5,7 @@ namespace Sorter
 {
     public class Film: IComparable
     {
-        private const decimal SESSIONS_IN_ROW = 9;
+        private const int SESSIONS_IN_ROW = 9;
         private string filmName;
         private string trailerPath;
         private string duration;
@@ -30,9 +30,9 @@ namespace Sorter
             get { return filmName; }
         }
 
-        public decimal getRowsCount()
+        public int GetRowsCount()
         {
-            return Math.Ceiling(sessions.Count / SESSIONS_IN_ROW);
+            return (int)Math.Ceiling((double)sessions.Count / SESSIONS_IN_ROW);
         }
 
         public override string ToString()

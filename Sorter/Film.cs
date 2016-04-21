@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sorter
 {
-    class Film: IComparable
+    public class Film: IComparable
     {
         private const decimal SESSIONS_IN_ROW = 9;
         private string filmName;

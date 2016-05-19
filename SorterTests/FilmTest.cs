@@ -39,5 +39,19 @@ namespace SorterTests
             Assert.AreEqual(2, f3.GetRowsCount());
             Assert.AreEqual(2, f4.GetRowsCount());
         }
+
+        [TestMethod]
+        public void TestFormatAssignment()
+        {
+            Film f0 = new Film("Экипаж IMAX 3D", "", "", "");
+            Film f1 = new Film("Паранормальное явление 5: призраки в 3D IMAX 2D", "", "", "");
+            Film f2 = new Film("Паранормальное явление 5: призраки в 3D 2D", "", "", "");
+            Film f3 = new Film("Варкрафт 3D", "", "", "");
+
+            Assert.AreEqual(f0.Format, "IMAX 3D");
+            Assert.AreEqual(f1.Format, "IMAX 2D");
+            Assert.AreEqual(f2.Format, "2D");
+            Assert.AreEqual(f3.Format, "3D");
+        }
     }
 }

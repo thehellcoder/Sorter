@@ -7,6 +7,7 @@ namespace Sorter
     {
         private const int SESSIONS_IN_ROW = 9;
         private string filmName;
+        private string format;
         private string trailerPath;
         private string duration;
         private string ageRestriction;
@@ -18,6 +19,16 @@ namespace Sorter
             this.trailerPath = trailerPath.Trim();
             this.duration = duration.Trim();
             this.ageRestriction = ageRestriction.Trim();
+
+            string[] formats = { "IMAX 2D", "IMAX 3D", "2D", "3D" };
+            foreach(string format in formats)
+            {
+                if(this.filmName.Contains(format))
+                {
+                    this.format = format;
+                    break;
+                }
+            }
         }
 
         public void AddSession(string time, string price, string hall)
@@ -28,6 +39,11 @@ namespace Sorter
         public string FilmName
         {
             get { return filmName; }
+        }
+
+        public string Format
+        {
+            get { return format; }
         }
 
         public int GetRowsCount()

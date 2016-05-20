@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Sorter
 {
@@ -9,6 +10,7 @@ namespace Sorter
         private string filmName;
         private string format;
         private string trailerPath;
+        private string trailerFilename;
         private string duration;
         private string ageRestriction;
         private List<Session> sessions = new List<Session>();
@@ -20,6 +22,7 @@ namespace Sorter
             this.duration = duration.Trim();
             this.ageRestriction = ageRestriction.Trim();
 
+            this.format = "";
             string[] formats = { "IMAX 2D", "IMAX 3D", "2D", "3D" };
             foreach(string format in formats)
             {
@@ -29,6 +32,41 @@ namespace Sorter
                     break;
                 }
             }
+            trailerFilename = TranslateTrailerFilename();
+        }
+
+        private string TranslateTrailerFilename()
+        {
+            string result = filmName;
+            if(!string.IsNullOrEmpty(format))
+            {
+                result = result.Replace(format, "");
+            }
+            result = result.ToLower();
+            
+            Regex nonAlphaNumeric = new Regex(@"\W");
+            result = nonAlphaNumeric.Replace(result, " ");
+            Regex tooManySpaces = new Regex(@"\s{2,}");
+            result = tooManySpaces.Replace(result, " ").Trim();
+
+            string[] rus = {
+                "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и",
+                "й", "к", "л", "м", "н", "о", "п", "р", "с", "т",
+                "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь",
+                "э", "ю", "я", " "
+            };
+            string[] trans = {
+                "a", "b", "v", "g", "d", "e", "e", "j", "z", "i",
+                "i", "k", "l", "m", "n", "o", "p", "r", "s", "t",
+                "u", "f", "h", "c", "ch", "sh", "sc", "", "y", "",
+                "e", "iu", "ia", "_"
+            };
+            for (int i = 0; i < rus.Length; i ++)
+            {
+                result = result.Replace(rus[i], trans[i]);
+            }
+
+            return result;
         }
 
         public void AddSession(string time, string price, string hall)
@@ -44,6 +82,11 @@ namespace Sorter
         public string Format
         {
             get { return format; }
+        }
+
+        public string TrailerFileName
+        {
+            get { return trailerFilename; }
         }
 
         public int GetRowsCount()

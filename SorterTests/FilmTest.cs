@@ -53,5 +53,15 @@ namespace SorterTests
             Assert.AreEqual(f2.Format, "2D");
             Assert.AreEqual(f3.Format, "3D");
         }
+
+        [TestMethod]
+        public void TestTrailerFilenameTranslate()
+        {
+            Film f0 = new Film("Экипаж", "", "", "");
+            Film f1 = new Film("#ВСЕ_ИСПРАВИТЬ!?!", "", "", "");
+
+            Assert.AreEqual(f0.TrailerFileName, "ekipaj");
+            Assert.AreEqual(f1.TrailerFileName, "vse_ispravit");
+        }
     }
 }

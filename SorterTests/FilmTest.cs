@@ -59,9 +59,11 @@ namespace SorterTests
         {
             Film f0 = new Film("Экипаж", "", "", "");
             Film f1 = new Film("#ВСЕ_ИСПРАВИТЬ!?!", "", "", "");
+            Film f2 = new Film("Паранормальное явление 5: Призраки в 3D IMAX 2D", "", "", "");
 
             Assert.AreEqual(f0.TrailerFileName, "ekipaj");
             Assert.AreEqual(f1.TrailerFileName, "vse_ispravit");
+            Assert.AreEqual(f2.TrailerFileName, "paranormalnoe_iavlenie_5_prizraki_v_3d");
         }
     }
 }

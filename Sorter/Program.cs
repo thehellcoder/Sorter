@@ -8,6 +8,7 @@ namespace Sorter
 {
     class Program
     {
+        private static string content = "";
         private static List<Film> films = new List<Film>();
 
         private static bool FilmsEquals()
@@ -15,36 +16,19 @@ namespace Sorter
             return false;
         }
 
-        private static void Process(string path)
+        private static void Read(string path)
         {
-            string content, tmp;
+            Console.WriteLine("Reading file {0}...", path);
             using (StreamReader reader = new StreamReader(path, Encoding.Default))
             {
-                content = reader.ReadToEnd();
+                content += reader.ReadToEnd();
+                content += ";;;;;;;;;;;;;\n;;;;;;;;;;;;;";
             }
+        }
 
-            int len = content.Length;
-            do
-            {
-                tmp = content;
-                content = content.Replace(";P;", ";VIP;");
-            }
-            while (tmp != content);
-            do
-            {
-                tmp = content;
-                content = content.Replace(";X;", ";IMAX;");
-            }
-            while (tmp != content);
-            if (len == content.Length)
-            {
-                // Файл уже был обработан...
-                Console.WriteLine("No need to process the file!");
-                return;
-            }
-            // Обрабатываем файл
-            Console.WriteLine("Processing the file...");
-            content += ";;;;;;;;;;;;;\n;;;;;;;;;;;;;";
+        private static void Process(string path)
+        {
+            Console.WriteLine("Processing...");
 
             string[] separators = { ";;;;;;;;;;;;;" };
             string[] items = content.Split(separators, 0);
@@ -55,6 +39,7 @@ namespace Sorter
                     string[] parts = item.Split(';');
 
                     string filmName = parts[13].Trim();
+                    filmName = filmName.Replace(" VIP", "");
                     string trailerPath = parts[26];
                     string duration = parts[39];
                     string ageRestriction = parts[52];
@@ -102,6 +87,9 @@ namespace Sorter
 
         static void Main(string[] args)
         {
+            Read("source.csv");
+            Read("source_imax.csv");
+            File.Delete("source_imax.csv");
             Process("source.csv");
 
             //Console.WriteLine("\nPress any key...");

@@ -16,17 +16,18 @@ namespace Sorter
             return false;
         }
 
-        private static void Read(string path)
+        private static void Read(string fileName)
         {
-            Console.WriteLine("Reading file {0}...", path);
-            using (StreamReader reader = new StreamReader(path, Encoding.Default))
+            fileName = DateTime.Now.ToString("dd-MM-yyyy") + "\\" + fileName;
+            Console.WriteLine("Reading file {0}...", fileName);
+            using (StreamReader reader = new StreamReader(fileName, Encoding.Default))
             {
                 content += reader.ReadToEnd();
                 content += ";;;;;;;;;;;;;\n;;;;;;;;;;;;;";
             }
         }
 
-        private static void Process(string path)
+        private static void Process(string fileName)
         {
             Console.WriteLine("Processing...");
 
@@ -79,7 +80,7 @@ namespace Sorter
             }
             content = content.Trim();
 
-            using (StreamWriter writer = new StreamWriter(path, false, Encoding.Default))
+            using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.Default))
             {
                 writer.Write(content);
             }
@@ -89,7 +90,7 @@ namespace Sorter
         {
             Read("source.csv");
             Read("source_imax.csv");
-            File.Delete("source_imax.csv");
+            //File.Delete("source_imax.csv");
             Process("source.csv");
 
             //Console.WriteLine("\nPress any key...");

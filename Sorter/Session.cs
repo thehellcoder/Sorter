@@ -8,18 +8,12 @@ namespace Sorter
         private string price;
         private string hall;
 
-        public Session(string time, string price, string hall)
+        public Session(DateTime time, string price, string hall)
         {
-            DateTime dt;
-            if (DateTime.TryParse(time.Trim(), out dt))
-            {
-                if (dt.Hour < 9)
-                {
-                    dt = dt.AddDays(1);
-                }
-                this.time = dt;
-            }
+            this.time = time;
             this.price = price.Trim();
+
+            hall = hall.Replace("Зал ", "");
             this.hall = hall.Trim();
         }
 

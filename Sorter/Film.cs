@@ -13,11 +13,17 @@ namespace Sorter
         private string trailerFilename;
         private string duration;
         private string ageRestriction;
-        private List<Session> sessions = new List<Session>();
+        private Dictionary<KeyValuePair<DateTime, string>, List<Session>> sessions = new Dictionary<KeyValuePair<DateTime, string>, List<Session>>();
 
         public Film(string filmName, string trailerPath, string duration, string ageRestriction)
         {
+            int currYear = DateTime.Now.Year;
+            for(int i = -2; i <= 1; i ++)
+            {
+                filmName = filmName.Replace(String.Format(" ({0})", currYear + i), "");
+            }
             this.filmName = filmName.Trim();
+
             this.trailerPath = trailerPath.Trim();
             this.duration = duration.Trim();
             this.ageRestriction = ageRestriction.Trim();
@@ -32,7 +38,8 @@ namespace Sorter
                     break;
                 }
             }
-            trailerFilename = TranslateTrailerFilename();
+
+            trailerFilename = TranslateTrailerFilename() + ".mp4";
         }
 
         private string TranslateTrailerFilename()
@@ -43,6 +50,10 @@ namespace Sorter
                 result = result.Replace(format, "");
             }
             result = result.ToLower();
+            if(result.StartsWith("мульт в кино"))
+            {
+                result = "мульт в кино";
+            }
             
             Regex nonAlphaNumeric = new Regex(@"\W");
             result = nonAlphaNumeric.Replace(result, " ");
@@ -71,7 +82,21 @@ namespace Sorter
 
         public void AddSession(string time, string price, string hall)
         {
-            sessions.Add(new Session(time, price, hall));
+            DateTime dt;
+            if (DateTime.TryParse(time.Trim(), out dt))
+            {
+                if (dt.Hour < 9)
+                {
+                    dt = dt.AddDays(1);
+                }
+            }
+            KeyValuePair<DateTime, string> key = new KeyValuePair<DateTime, string>(dt, hall);
+            Session session = new Session(dt, price, hall);
+            if (!sessions.ContainsKey(key))
+            {
+                sessions.Add(key, new List<Session>());
+            }
+            sessions[key].Add(session);
         }
 
         public string FilmName
@@ -98,13 +123,13 @@ namespace Sorter
         {
             string result = "";
             string pattern = "Название фильма;№ сеанса;;1 сеанс;2 сеанс;3 сеанс;4 сеанс;5 сеанс;6 сеанс;7 сеанс;8 сеанс;9 сеанс;;\r\n";
-            pattern += filmName + ";Начало сеанса;;{0}Путь к трейлеру;" + trailerPath + "\r\n";
+            pattern += filmName + ";Начало сеанса;;{0}Путь к трейлеру;" + trailerPath + trailerFilename + "\r\n";
             pattern += ";Цена;;{1}Продолжительность;" + duration + "\r\n";
             pattern += ";Зал;;{2}Возраст;" + ageRestriction + "\r\n";
             pattern += ";;;;;;;;;;;;;\r\n;;;;;;;;;;;;;\r\n";
 
-            sessions.Sort();
-            while (sessions.Count > 0)
+            List<KeyValuePair<DateTime, string>> sessionsTimes = new List<KeyValuePair<DateTime, string>>(sessions.Keys);
+            while (sessionsTimes.Count > 0)
             {
                 string times = "";
                 string prices = "";
@@ -112,13 +137,20 @@ namespace Sorter
 
                 for (int i = 0; i < SESSIONS_IN_ROW; i++)
                 {
-                    if(sessions.Count > 0)
+                    if(sessionsTimes.Count > 0)
                     {
-                        Session current = sessions[0];
-                        times += string.Format("{0:HH:mm};", current.Time);
-                        prices += string.Format("{0};", current.Price);
-                        halls += string.Format("{0};", current.Hall);
-                        sessions.RemoveAt(0);
+                        List<Session> current = sessions[sessionsTimes[0]];
+                        times += string.Format("{0:HH:mm};", current[0].Time);
+                        if(current.Count > 1)
+                        {
+                            prices += string.Format("от {0};", current[0].Price);
+                        }
+                        else
+                        {
+                            prices += string.Format("{0};", current[0].Price);
+                        }
+                        halls += string.Format("{0};", current[0].Hall);
+                        sessionsTimes.RemoveAt(0);
                     }
                     else
                     {

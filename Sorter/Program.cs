@@ -118,9 +118,29 @@ namespace Sorter
                 content += film.ToString();
             }
 
-            using (StreamWriter writer = new StreamWriter(exportPath + fileName, false, Encoding.Default))
+            using(StreamWriter writer = new StreamWriter(exportPath + fileName, false, Encoding.Default))
             {
                 writer.Write(content.Trim());
+            }
+        }
+
+        private static void CheckTrailers()
+        {
+            bool trailersOK = true;
+            using(StreamWriter writer = new StreamWriter("log.txt", false, Encoding.Default))
+            {
+                foreach (Film film in films)
+                {
+                    if (!File.Exists(trailerPath + film.TrailerFileName))
+                    {
+                        writer.WriteLine("{0} - Не найден трейлер {1} для фильма \"{2}\"", DateTime.Now, film.TrailerFileName, film.FilmName);
+                        trailersOK = false;
+                    }
+                }
+            }
+            if(trailersOK)
+            {
+                File.Delete("log.txt");
             }
         }
 
@@ -204,8 +224,9 @@ namespace Sorter
                 DateTime.TryParse(args[0], out currentDate);
             }
             LoadTimetableFromDB(currentDate);
-
             ExportCSV("source.csv");
+
+            CheckTrailers();
 
             //Read("source.csv");
             //Read("source_imax.csv");
